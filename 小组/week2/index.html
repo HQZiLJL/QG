@@ -10,10 +10,6 @@
             background-color: rgb(245, 245, 245);
         }
 
-        .mainWrapper {
-            margin: 10px auto 10px;
-        }
-
         .btnGroup {
 
             /* width: 45px; */
@@ -22,14 +18,16 @@
 
         .itemComplete .btnName {
             font-size: 16px;
+            background-color: rgb(245, 245, 245);
+            border-style: none;
             display: inline-block;
-            vertical-align: baseline;
+            /* vertical-align: baseline; */
         }
 
         /* vertical-align: middle; */
 
         .btnDelete {
-            float: right;
+            /* float: right; */
             vertical-align: middle;
         }
 
@@ -48,7 +46,9 @@
 
         .iconCompleteActive {
             /* border-color: green; */
-            text-align: center;
+            /* text-align: center; */
+            display: inline;
+            margin-top: 9px;
         }
 
         .iconCompleteActive:before {
@@ -68,6 +68,17 @@
             margin-bottom: 20px;
         }
 
+        .head {
+            width: 550px;
+            margin: 0px auto;
+            overflow: hidden;
+        }
+
+        .usecount {
+            float: right;
+            margin: 5px 4px 3px 0;
+        }
+
         .todoapp {
             margin: 100px auto 10px;
             width: 550px;
@@ -77,10 +88,25 @@
             color: #b83f45;
         }
 
-        .input-todo {
-            margin: 1px 0 1px 560px;
+        .input-search {
+            margin-bottom: 10px;
+            margin-right: 2px;
             border-style: none;
-            width: 550px;
+            text-indent: 2em;
+            font-weight: 700;
+            float: right;
+            width: 200px;
+            height: 33px;
+            background-color: #fff;
+            border-radius: 1%;
+            box-shadow: 0 -1px 5px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        .input-todo {
+            /* margin: 1px 0 1px 560px; */
+            margin-right: 2px;
+            border-style: none;
+            width: 472px;
             height: 33px;
             padding: 16px 16px 16px 60px;
             font-size: 24px;
@@ -89,169 +115,135 @@
             box-shadow: 0 -1px 5px 0 rgba(0, 0, 0, 0.2);
         }
 
-        .input-todo:hover {
-            border: 2px solid red;
-        }
-
-        .input-todo:active {
-            border: 2px solid red;
-        }
-
-        .todo-list {
-            margin: 10px 0;
-        }
-
-        .mainWrapper {
-            margin: 0 0 0 560px;
+        .body {
+            width: 550px;
+            margin: 0 auto;
         }
 
         .filter-btn-group {
             display: inline-block;
             margin-left: 30px;
         }
+
+        .useCount {
+            color: red;
+        }
+
+        .send-time {
+            float: right;
+        }
     </style>
 </head>
 
 <body>
-
-    <head>
+    <div class="head">
         <h1 class="todoapp">todo List</h1>
+        <input class="input-search" type="text" placeholder="搜你想搜">
         <input class="input-todo" type="text" placeholder="你想做点什么呢？">
-    </head>
+        <div class="usecount"><span class="useCount">0</span>/1000</div>
+    </div>
 
-    <body>
-        <div class="mainWrapper">
-            <ul class="todo-list">
-                <!-- <li class="itemComplete">
-                    <span class="iconComplete iconCompleteActive"></span>
-                    <span class="btnName iconText">${item.name}</span>
-                    <div class="btnGroup">
-                        <button class="btnDelete">删除</button>
-                    </div>
-                </li>
-                <li class="itemComplete">
-                    <span class="iconComplete"></span>
-                    <span class="btnName">${item.name}</span>
-                    <div class="btnGroup">
-                        <button class="btnDelete">删除</button>
-                    </div>
-                </li> -->
-            </ul>
-            <div>
-                <span><span class="active-num"></span>&nbsp;item&nbsp;left</span>
-                <div class="filter-btn-group">
-                    <button>全部</button>
-                    <button>未完成</button>
-                    <button>已完成</button>
-                </div>
-                <button>清空</button>
+    <div class="body">
+        <ul class="todo-list"></ul>
+        <div>
+            <span><span class="active-num"></span>&nbsp;item&nbsp;left</span>
+            <div class="filter-btn-group">
+                <button>全部</button>
+                <button>未完成</button>
+                <button>已完成</button>
             </div>
+            <button>清空</button>
         </div>
+    </div>
+</body>
 
-    </body>
-
-    <script>
-        var list = [{
-            name: '吃饭',
-            completed: 0,
-        }, {
-            name: '喝水',
-            completed: 0,
-        }, {
-            name: '写作业',
-            completed: 0,
-        }]
-        renderTodoList(list);
-        let todo = document.querySelector('.input-todo')
-        todo.addEventListener('keyup', function (e) {
-            console.log(e)
-            // || !e.target.valve.trim()
-            if (!e.target.value) {
-                return
+<script>
+    let inputTodo = document.querySelector('.input-todo')
+    let useCount = document.querySelector('.useCount')
+    inputTodo.addEventListener('input', function () {
+        console.log(this.value.length)
+        useCount.innerHTML = this.value.length
+    })
+    var list = []
+    renderTodoList(list);
+    inputTodo.addEventListener('keyup', function (e) {
+        console.log(e)
+        // || !e.target.valve.trim()
+        if (e.target.value === '') {
+            e.target.value = ''
+            useCount.innerHTML = 0
+            return console.log("11")
+        }
+        if (e.key === 'Enter') {
+            // e.target.valve.trim()
+            console.log('按下了回车键')
+            var name = e.target.value;
+            var item = {
+                name: name,
+                completed: 0,
             }
-            if (e.key === 'Enter') {
-                console.log('按下了回车键')
-                var name = e.target.value;
-                var item = {
-                    name: name,
-                    completed: 0,
-                }
-                list.unshift(item)
-                // renderTodoList(list)
-                var oLi = document.createElement("li");//增加一个li新节点
-                var html = '';
-                html =
-                    `<li class="itemComplete">
+            list.unshift(item)
+            // renderTodoList(list)
+            var oLi = document.createElement("li");//增加一个li新节点
+            oLi.innerHTML =
+                `<li class="itemComplete">
                     <span class="iconComplete"></span>
-                    <span class="btnName">${item.name}</span>
+                    <input class="btnName" value="${item.name}">
                     <div class="btnGroup">
-                        <!-- <button class="btn-compelete">完成</button> -->
                         <button class="btnDelete">删除</button>
+                        <p class="send-time">发布于${new Date().toLocaleString()}</p>
                 </div>
                 </li>`
-                oLi.innerHTML = html
-                // console.log(html);
-                let icon = document.querySelectorAll('.itemComplete')
-                document.querySelector('.todo-list').insertBefore(oLi, icon[0])
-                e.target.value = ''
-            }
-        })
-        function renderTodoList(list) {
-            var html1 = '';
-            list.forEach((item, index, list) => {
-                html1 = html1 +
-                    `<li class="itemComplete">
-                    <span class="iconComplete"></span>
-                    <span class="btnName">${item.name}</span>
-                    <div class="btnGroup">
-                        <!-- <button class="btn-compelete">完成</button> -->
-                        <button class="btnDelete">删除</button>
-                    </div>
-                    </li>`
-            })
-            // console.log(html);
-            document.querySelector('.todo-list').innerHTML = html1
-        }
-
-        let icon1 = document.querySelectorAll('.iconComplete')
-        let text = document.querySelectorAll('.btnName')
-        console.log('icon1=' + icon1)
-        for (let i = 0; i < icon1.length; i++)
-            icon1[i].addEventListener('click', function () {
-                console.log("点击了第${i}个完成按钮")
-                // icon[i].classList.add('iconCompleteActive')
-                // icon[i].classList.add('iconCompleteActive:before')
-                // text[i].classList.add('iconText')
-                if (icon1[i].className.includes('iconCompleteActive')) {
-                    icon1[i].classList.remove('iconCompleteActive');
-                    icon1[i].classList.remove('iconCompleteActive:before');
-                    text[i].classList.remove('iconText');
-                    list[i].item.completed = 1
+            //需求4：删除留言
+            //在事件处理函数里面获取，点击按钮，注册点击事件
+            //(易错点：必须在点击按钮事件里面获取，外面获取不到
+            //删除对应的元素（通过this获取对应的那条需要删除的元素）
+            //教你一招：放到追加进u儿的前面，这样创建元素的同时顺便绑定了事件，赞~
+            let icon = oLi.querySelector('.iconComplete')
+            let text = oLi.querySelector('.btnName')
+            icon.addEventListener('click', function () {
+                if (icon.className.includes('iconCompleteActive')) {
+                    icon.classList.remove('iconCompleteActive');
+                    icon.classList.remove('iconCompleteActive:before');
+                    text.classList.remove('iconText');
+                    list.item.completed = 1
                 }
                 else {
-                    icon1[i].classList.add('iconCompleteActive');
-                    icon1[i].classList.add('iconCompleteActive:before');
-                    text[i].className = 'iconText';
-                    list[i].item.completed = 0
-                    // console.log(span.className);
+                    icon.classList.add('iconCompleteActive');
+                    icon.classList.add('iconCompleteActive:before');
+                    text.className = 'iconText';
+                    list.item.completed = 0
                 }
-                console.log('icon[${i}]被点击')
-                var num = list.filter(item = item.completed === 0).length
-                document.querySelector('.active-nun').innerHTML = num
-                // var completeList = icon.filter((item, index) => {
-                //     return icon[i].item.completed === 0;
-                // })
-                // console.log('${completeList}')
-                // document.querySelector('.active-num').innerHTML = item.completeList.length - 1
             })
-        // function delete_item(index) {
-        //     console.log("点击了第${index}个删除按钮")
-        //     list.splice(index, 1);
-        //     renderTodoList(list);
-        // }
-
-
-    </script>
+            let ul = document.querySelector('.todo-list')
+            ul.insertBefore(oLi, ul.children[0])
+            // oLi.innerHTML = 0
+            e.target.value = ''
+            useCount.innerHTML = 0
+        }
+    })
+    function renderTodoList(list) {
+        var html = '';
+        list.forEach((item, index, list) => {
+            html = html +
+                `<li class="itemComplete">
+                    <span class="iconComplete"></span>
+                    <input class="btnName" value="${item.name}">
+                    <div class="btnGroup">
+                        <button class="btnDelete">删除</button>
+                        <p class="send-time">发布于${new Date().toLocaleString()}</p>
+                    </div>
+                    </li>`
+        })
+        // console.log(html);
+        document.querySelector('.todo-list').innerHTML = html
+    }
+    // console.log('icon1=' + icon1)
+    for (let i = 0; i < icon1.length; i++)
+        console.log('icon[${i}]被点击')
+    var num = list.filter(item = item.completed === 0).length
+    document.querySelector('.active-nun').innerHTML = num
+</script>
 </body>
 
 </html>
