@@ -1,5 +1,5 @@
 /***************************************************************************************
- *	File Name				:	linklist.h
+ *	File Name				:	counter.h
  *	CopyRight				:	2024 QG Studio
  *	SYSTEM					:   win11
  *	Create Data				:	2024.3.21
@@ -10,16 +10,16 @@
  *
  *
  ***************************************************************************************/
- /**************************************************************
-  *	Multi-Include-Prevent Section
-  **************************************************************/
+/**************************************************************
+ *	Multi-Include-Prevent Section
+ **************************************************************/
 
-#ifndef LINKLIST_H_INCLUDED
-#define LINKLIST_H_INCLUDED
+#ifndef COUNTER_H_INCLUDED
+#define COUNTER_H_INCLUDED
 
-  /**************************************************************
-   *	Macro Define Section
-   **************************************************************/
+/**************************************************************
+ *	Macro Define Section
+ **************************************************************/
 
 #define MAXSIZE 200
 int q;
@@ -28,22 +28,22 @@ int q;
  *	Struct Define Section
  **************************************************************/
 
- // 定义结点
+// 定义结点
 typedef struct
 {
-	int data[MAXSIZE];
-	int top;
-}STACK;
+  int data[MAXSIZE];
+  int top;
+} STACK;
 
-STACK* stack_create();
-void stack_create2(STACK** ptr);
-int stack_isempty(STACK* ptr);
-int stack_isfull(STACK* ptr);
-int stack_push(STACK* ptr, const int* x);
-int stack_pop(STACK* ptr, int* x);
-int stack_top(STACK* ptr, int* x);  //取栈顶元素查看,不出栈
-void stack_display(STACK* ptr);
-void stack_destroy(STACK* ptr);
+STACK *stack_create();
+void stack_create2(STACK **ptr);
+int stack_isempty(STACK *ptr);
+int stack_isfull(STACK *ptr);
+int stack_push(STACK *ptr, const int *x);
+int stack_pop(STACK *ptr, int *x);
+int stack_top(STACK *ptr, int *x); // 取栈顶元素查看,不出栈
+void stack_display(STACK *ptr);
+void stack_destroy(STACK *ptr);
 /**************************************************************
  *	End-Multi-Include-Prevent Section
  **************************************************************/
