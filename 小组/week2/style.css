@@ -4,7 +4,6 @@ body {
 
 .btnGroup {
 
-    /* width: 45px; */
     display: inline-block;
 }
 
@@ -35,15 +34,6 @@ body {
     padding: 7.5px 0px 7.5px 7.5px;
 }
 
-/* .itemComplete .btnName:hover {
-            float: left;
-            width: 435px;
-            height: 40px;
-            font-size: 32px;
-            padding: 7.5px 0px 7.5px 7.5px;
-            border-style: none;
-        } */
-
 .itemComplete-searched {
     width: 550px;
     height: 59px;
@@ -64,11 +54,7 @@ body {
 
 }
 
-
-
 .iconCompleteActive {
-    /* border-color: green; */
-    /* text-align: center; */
     display: inline;
     margin-top: 9px;
 }
@@ -94,8 +80,6 @@ body {
     list-style: none;
 }
 
-
-
 .head {
     width: 550px;
     margin: 0px auto;
@@ -108,10 +92,10 @@ body {
 }
 
 .todoapp {
-    margin: 100px auto 10px;
+    margin: 100px auto 15px;
     width: 550px;
     font-size: 80px;
-    font-weight: 700;
+    font-weight: 400;
     text-align: center;
     color: #b83f45;
 }
@@ -131,7 +115,6 @@ body {
 }
 
 .input-todo {
-    /* margin: 1px 0 1px 560px; */
     margin-right: 2px;
     border-style: none;
     width: 474px;
@@ -217,7 +200,6 @@ body {
 }
 
 .father {
-
     position: relative;
     margin-bottom: 1px;
 }
@@ -229,8 +211,9 @@ body {
 }
 
 .footer {
+    position: relative;
     width: 550px;
-    height: 50px;
+    height: 40px;
     background-color: #fff;
 }
 
@@ -253,6 +236,9 @@ li {
 }
 
 .num {
-    margin-left: 12px;
-    margin-top: 14.5px;
+    position: absolute;
+    /* margin-left: 12px;
+    margin-top: 14.5px; */
+    top: 9.5px;
+    right: 12px;
 }
