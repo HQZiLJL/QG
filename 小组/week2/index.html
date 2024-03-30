@@ -158,15 +158,39 @@
 </body>
 
 <script>
+    var num = 0
+    document.querySelector('.active-num').innerHTML = num
+    //读取本地存储的数据封装为函数
+    //需求阄：读取本地存储数据（封装函数）
+    //
+    //如果本地存储有数据，则返回JS0N.parse()之后的对象
+    //  
+    // 如果本地存储没有数据，则默认写入三条数据，注意存储的利用JS0N.stringify()存储) JSON格式
+    function getLocalData() {
+        let data = localStorage.getItem('data1')
+        if (data)//如果本地存储有数组则返回JSON.parse()之后的对象
+            return JSON.parse(data)
+        else {//如果本地存储没有数据,则默认写入三条数据,注意存储的利用JSON.stringify()存储JSON格
+            let list = [{ name: '快敲代码', complete: 'false' }, { name: '快睡觉', complete: 'false' }, { name: 'bug改完了吗？', complete: 'false' },]
+            localStorage.setItem('data1', JSON.stringify(list))
+        }
+    }
+    getLocalData()
     let inputTodo = document.querySelector('.input-todo')
     let useCount = document.querySelector('.useCount')
     inputTodo.addEventListener('input', function () {
         console.log(this.value.length)
         useCount.innerHTML = this.value.length
     })
-    var list = []
-    renderTodoList(list);
+    //需求②：渲染模块
+    //先读取本地存储数据，然后渲染
+    let list = getLocalData()
+    render(list);
     inputTodo.addEventListener('keyup', function (e) {
+        //需求③：添加模块
+        //注意，先取的最新的本地存储数据，然后追加
+        let list = getLocalData()
+        //新增了数据，要把新数据存储到本地存储，别忘记转换
         console.log(e)
         // || !e.target.valve.trim()
         if (e.target.value === '') {
@@ -177,72 +201,120 @@
         if (e.key === 'Enter') {
             // e.target.valve.trim()
             console.log('按下了回车键')
-            var name = e.target.value;
-            var item = {
-                name: name,
-                completed: 0,
+            var item =
+            {
+                name: e.target.value,
+                completed: 'false'
             }
             list.unshift(item)
-            // renderTodoList(list)
-            var oLi = document.createElement("li");//增加一个li新节点
-            oLi.innerHTML =
-                `<li class="itemComplete">
-                    <span class="iconComplete"></span>
-                    <input class="btnName" value="${item.name}">
-                    <div class="btnGroup">
-                        <button class="btnDelete">删除</button>
-                        <p class="send-time">发布于${new Date().toLocaleString()}</p>
-                </div>
-                </li>`
+            num++;
+            document.querySelector('.active-num').innerHTML = num
+            localStorage.setItem('data1', JSON.stringify(list))
+            list = getLocalData()
+            render(list);
+            // var oLi = document.createElement("li");//增加一个li新节点
+            // oLi.innerHTML =
+            //     `<li class="itemComplete">
+            //         <span class="iconComplete"></span>
+            //         <input class="btnName" value="${item.name}">
+            //         <div class="btnGroup">
+            //             <button class="btnDelete">删除</button>
+            //             <p class="send-time">发布于${new Date().toLocaleString()}</p>
+            //     </div>
+            //     </li>`
+
             //需求4：删除留言
             //在事件处理函数里面获取，点击按钮，注册点击事件
             //(易错点：必须在点击按钮事件里面获取，外面获取不到
             //删除对应的元素（通过this获取对应的那条需要删除的元素）
-            //教你一招：放到追加进u儿的前面，这样创建元素的同时顺便绑定了事件，赞~
-            let icon = oLi.querySelector('.iconComplete')
-            let text = oLi.querySelector('.btnName')
-            icon.addEventListener('click', function () {
-                if (icon.className.includes('iconCompleteActive')) {
-                    icon.classList.remove('iconCompleteActive');
-                    icon.classList.remove('iconCompleteActive:before');
-                    text.classList.remove('iconText');
-                    list.item.completed = 1
-                }
-                else {
-                    icon.classList.add('iconCompleteActive');
-                    icon.classList.add('iconCompleteActive:before');
-                    text.className = 'iconText';
-                    list.item.completed = 0
-                }
-            })
-            let ul = document.querySelector('.todo-list')
-            ul.insertBefore(oLi, ul.children[0])
-            // oLi.innerHTML = 0
+            //教你一招：放到追加进ul的前面，这样创建元素的同时顺便绑定了事件，赞~
+            // let icon = oLi.querySelector('.iconComplete')
+            // let text = oLi.querySelector('.btnName')
+            // icon.addEventListener('click', function () {
+            //     if (icon.className.includes('iconCompleteActive')) {
+            //         icon.classList.remove('iconCompleteActive');
+            //         icon.classList.remove('iconCompleteActive:before');
+            //         text.classList.remove('iconText');
+            //         // item.completed = 'true'
+            //         num++;
+            //         document.querySelector('.active-num').innerHTML = num
+            //     }
+            //     else {
+            //         icon.classList.add('iconCompleteActive');
+            //         icon.classList.add('iconCompleteActive:before');
+            //         text.className = 'iconText';
+            //         // item.completed = 'false'
+            //         num--;
+            //         document.querySelector('.active-num').innerHTML = num
+            //     }
+            // })
+
+            // let ul = document.querySelector('.todo-list')
+            // ul.insertBefore(oLi, ul.children[0])
             e.target.value = ''
             useCount.innerHTML = 0
+            let icon = document.querySelectorAll('.iconComplete')
+            // let text = ul.querySelectorALL('.btnName')
+            for (let i = 0; i < icon.length; i++)
+                icon[i].addEventListener('click', function () {
+                    if (icon[i].className.includes('iconCompleteActive')) {
+                        icon[i].classList.remove('iconCompleteActive');
+                        icon[i].classList.remove('iconCompleteActive:before');
+                        // text[i].classList.remove('iconText');
+                        // item.completed = 'true'
+                        // num++;
+                        // document.querySelector('.active-num').innerHTML = num
+                    }
+                    else {
+                        icon[i].classList.add('iconCompleteActive');
+                        icon[i].classList.add('iconCompleteActive:before');
+                        // text[i].className = 'iconText';
+                        // item.completed = 'false'
+                        // num--;
+                        // document.querySelector('.active-num').innerHTML = num
+                    }
+                })
         }
     })
-    function renderTodoList(list) {
+    let change = document.querySelectorAll('.todo-list .btnName')
+    for (let i = 0; i < change.length; i++) {
+        console.log(change[i]);
+        change[i].addEventListener('keyup', function (e) {
+            console.log(e)
+            console.log(11);
+        })
+    }
+    function render(list) {
         var html = '';
         list.forEach((item, index, list) => {
-            html = html +
-                `<li class="itemComplete">
+            if (item.completed = 'false') {
+                html = html +
+                    `<li class="itemComplete">
                     <span class="iconComplete"></span>
                     <input class="btnName" value="${item.name}">
                     <div class="btnGroup">
                         <button class="btnDelete">删除</button>
                         <p class="send-time">发布于${new Date().toLocaleString()}</p>
                     </div>
+                </li>`
+            }
+            else {
+                html = html +
+                    `<li class="itemComplete">
+                    <span class="iconComplete iconCompleteActive iconCompleteActive:before"></span>
+                    <input class="btnName iconText" value="${item.name}">
+                    <div class="btnGroup">
+                        <button class="btnDelete">删除</button>
+                        <p class="send-time">发布于${new Date().toLocaleString()}</p>
+                    </div>
                     </li>`
+            }
         })
         // console.log(html);
         document.querySelector('.todo-list').innerHTML = html
     }
-    // console.log('icon1=' + icon1)
-    for (let i = 0; i < icon1.length; i++)
-        console.log('icon[${i}]被点击')
-    var num = list.filter(item = item.completed === 0).length
-    document.querySelector('.active-nun').innerHTML = num
+
+
 </script>
 </body>
 
