@@ -64,19 +64,21 @@ inputTodo.addEventListener('keyup', function (e) {
         document.querySelector('.active-num').innerHTML = num
         localStorage.setItem('data', JSON.stringify(list))
         list = getLocalData()
-        render(list);
-        // var oLi = document.createElement("li");//增加一个li新节点
-        // oLi.innerHTML =
-        //     `<li class="itemComplete">
-        //         <span class="iconComplete"></span>
-        //         <input class="btnName" value="${item.name}">
-        //         <div class="btnGroup">
-        //             <button class="btnDelete"></button>
-        //             <p class="send-time">发布于${new Date().toLocaleString()}</p>
-        //     </div>
-        //     </li>`
+        // render(list);
+        var oLi = document.createElement("li");//增加一个li新节点
+        oLi.innerHTML =
+            `<li class="itemComplete">
+                <span class="iconComplete"></span>
+                <input class="btnName" value="${item.name}">
+                <div class="btnGroup">
+                    <button class="btnDelete"></button>
+                </div>
+            </li>`
+        var ul = document.querySelector(".todo-list")
+        ul.insertBefore(oLi, ul.children[0])
         e.target.value = ''
         useCount.innerHTML = 0
+        render(list)
         //点击圆圈修改样式
         let icon = document.querySelectorAll('.iconComplete')
         let text = document.querySelectorAll('.btnName')
@@ -96,9 +98,9 @@ inputTodo.addEventListener('keyup', function (e) {
                 else {
                     icon[i].classList.add('iconCompleteActive');
                     icon[i].classList.add('iconCompleteActive:before');
-                    text[i].className = 'iconText';
+                    text[i].classList.add('iconText');
                     list[i].complete = 'true'
-                    console.log(list[i].complete)
+                    console.log(list[i].complete);
                     num--;
                     console.log(num);
                     localStorage.setItem('num', JSON.stringify(num))
@@ -106,46 +108,132 @@ inputTodo.addEventListener('keyup', function (e) {
                 }
                 localStorage.setItem('data', JSON.stringify(list))
             })
+        //搜索框对应高亮
+        let ARR = list.map(val => {
+            return val.name
+        })
+        let search = document.querySelector('.input-search')
+        search.addEventListener('keyup', function (e) {
+            console.log(e.target.value);
+            for (let i = 0; i < ARR.length; i++) {
+                console.log(ARR[i].includes(e.target.value));
+                //&& (!e.target.value === '')
+                if (e.target.value === '') {
+                    text[i].classList.remove('iconText1')
+                    continue
+                }
+                if (ARR[i].includes(e.target.value)) {
+                    text[i].classList.add('iconText1')
+                }
+                else {
+                    text[i].classList.remove('iconText1')
+                }
+            }
+        })
+        search.addEventListener('blur', function (e) {
+            console.log(12);
+            for (let i = 0; i < ARR.length; i++) {
+                text[i].classList.remove('iconText1')
+            }
+            e.target.value = ''
+        })
+        //用户删除某一条笔记
+        let li = document.querySelectorAll('.itemComplete')
+        let Delete = document.querySelectorAll('.btnDelete')
+        for (let i = 0; i < Delete.length; i++) {
+            // li = document.querySelectorAll('.itemComplete')
+            // Delete = document.querySelectorAll('.btnDelete')
+            Delete[i].addEventListener('click', function (e) {
+                console.log(11);
+                num--;
+                localStorage.setItem('num', JSON.stringify(num))
+                document.querySelector('.active-num').innerHTML = num
+                console.log(li[i]);
+                // console.log(li[i].parentNode);
+                li[i].remove()
+                list.splice(i, 1)
+                // list.splice(--i, 1)
+                // localStorage.setItem('data', JSON.stringify(list))
+                // console.log(list.splice(i, 1));
+                localStorage.setItem('data', JSON.stringify(list))
+            })
+        }
+        //用户修改某一条之前的笔记
+        let change = document.querySelectorAll('.todo-list .btnName')
+        for (let i = 0; i < change.length; i++) {
+            console.log(change[i]);
+            change[i].addEventListener('keyup', function (e) {
+                if (e.key === 'Enter') {
+                    // e.target.valve.trim()
+                    if (e.target.value === '') {
+                        e.target.value = ''
+                        useCount.innerHTML = 0
+                        return alert("内容不能为空！");
+                    }
+                    console.log('按下了回车键')
+                    var item =
+                    {
+                        name: e.target.value,
+                        complete: list[i].complete
+                    }
+                    list[i] = item
+                    localStorage.setItem('data', JSON.stringify(list))
+                    change[i].value = e.target.value
+                }
+            })
+        }
     }
 })
+
+Delete()
+Change()
+click()
+search()
 //用户删除某一条笔记
-let Delete = document.querySelectorAll('.btnDelete')
-for (let i = 0; i < Delete.length; i++) {
-    Delete[i].addEventListener('click', function () {
-        // console.log(e)
-        console.log(11);
-        list.splice(i, 1)
-        num--;
-        localStorage.setItem('num', JSON.stringify(num))
-        document.querySelector('.active-num').innerHTML = num
-        localStorage.setItem('data', JSON.stringify(list))
-        render(list)
-    })
-}
-//用户修改某一条之前的笔记(双击修改)
-let change = document.querySelectorAll('.todo-list .btnName')
-for (let i = 0; i < change.length; i++) {
-    console.log(change[i]);
-    change[i].addEventListener('keyup', function (e) {
-        if (e.key === 'Enter') {
-            // e.target.valve.trim()
-            if (e.target.value === '') {
-                e.target.value = ''
-                useCount.innerHTML = 0
-                return alert("内容不能为空！");
-            }
-            console.log('按下了回车键')
-            var item =
-            {
-                name: e.target.value,
-                complete: list[i].complete
-            }
-            list[i] = item
+function Delete() {
+    let li = document.querySelectorAll('.itemComplete')
+    let Delete = document.querySelectorAll('.btnDelete')
+    for (let i = 0; i < Delete.length; i++) {
+        Delete[i].addEventListener('click', function (e) {
+            console.log(11);
+            num--;
+            localStorage.setItem('num', JSON.stringify(num))
+            document.querySelector('.active-num').innerHTML = num
+            console.log(li[i]);
+            // console.log(li[i].parentNode);
+            li[i].remove()
+            list.splice(i, 1)
+            // localStorage.setItem('data', JSON.stringify(list))
+            // console.log(list.splice(i, 1));
             localStorage.setItem('data', JSON.stringify(list))
-            list = getLocalData()
-            render(list);
-        }
-    })
+        })
+    }
+}
+//用户修改某一条之前的笔记
+function Change() {
+    let change = document.querySelectorAll('.todo-list .btnName')
+    for (let i = 0; i < change.length; i++) {
+        console.log(change[i]);
+        change[i].addEventListener('keyup', function (e) {
+            if (e.key === 'Enter') {
+                // e.target.valve.trim()
+                if (e.target.value === '') {
+                    e.target.value = ''
+                    useCount.innerHTML = 0
+                    return alert("内容不能为空！");
+                }
+                console.log('按下了回车键')
+                var item =
+                {
+                    name: e.target.value,
+                    complete: list[i].complete
+                }
+                list[i] = item
+                localStorage.setItem('data', JSON.stringify(list))
+                change[i].value = e.target.value
+            }
+        })
+    }
 }
 //遍历伪数组
 function render(list) {
@@ -154,11 +242,12 @@ function render(list) {
         if (item.complete === 'false') {
             html = html +
                 `<li class="itemComplete">
-                <span class="iconComplete"></span>
-                <input class="btnName" value="${item.name}">
+                    <span class="iconComplete"></span>
+                    <input class="btnName" value="${item.name}">
+                    <div class="btnGroup">
                     <button class="btnDelete"></button>
-                </div>
-            </li>`
+                    </div>
+                </li>`
         }
         else {
             html = html +
@@ -175,61 +264,65 @@ function render(list) {
     document.querySelector('.todo-list').innerHTML = html
 }
 //点击圆圈修改样式
-let icon = document.querySelectorAll('.iconComplete')
-let text = document.querySelectorAll('.btnName')
-for (let i = 0; i < icon.length; i++)
-    icon[i].addEventListener('click', function () {
-        if (icon[i].className.includes('iconCompleteActive')) {
-            icon[i].classList.remove('iconCompleteActive');
-            icon[i].classList.remove('iconCompleteActive:before');
-            text[i].classList.remove('iconText');
-            list[i].complete = 'false'
-            console.log(list[i].complete);
-            num++;
-            console.log(num);
-            localStorage.setItem('num', JSON.stringify(num))
-            document.querySelector('.active-num').innerHTML = num
-        }
-        else {
-            icon[i].classList.add('iconCompleteActive');
-            icon[i].classList.add('iconCompleteActive:before');
-            text[i].classList.add('iconText');
-            list[i].complete = 'true'
-            console.log(list[i].complete);
-            num--;
-            console.log(num);
-            localStorage.setItem('num', JSON.stringify(num))
-            document.querySelector('.active-num').innerHTML = num
-        }
-        localStorage.setItem('data', JSON.stringify(list))
-    })
+function click() {
+    let icon = document.querySelectorAll('.iconComplete')
+    let text = document.querySelectorAll('.btnName')
+    for (let i = 0; i < icon.length; i++)
+        icon[i].addEventListener('click', function () {
+            if (icon[i].className.includes('iconCompleteActive')) {
+                icon[i].classList.remove('iconCompleteActive');
+                icon[i].classList.remove('iconCompleteActive:before');
+                text[i].classList.remove('iconText');
+                list[i].complete = 'false'
+                console.log(list[i].complete);
+                num++;
+                console.log(num);
+                localStorage.setItem('num', JSON.stringify(num))
+                document.querySelector('.active-num').innerHTML = num
+            }
+            else {
+                icon[i].classList.add('iconCompleteActive');
+                icon[i].classList.add('iconCompleteActive:before');
+                text[i].classList.add('iconText');
+                list[i].complete = 'true'
+                console.log(list[i].complete);
+                num--;
+                console.log(num);
+                localStorage.setItem('num', JSON.stringify(num))
+                document.querySelector('.active-num').innerHTML = num
+            }
+            localStorage.setItem('data', JSON.stringify(list))
+        })
+}
 //搜索框对应高亮
-// console.log(ARR);
-let ARR = list.map(val => {
-    return val.name
-})
-let search = document.querySelector('.input-search')
-search.addEventListener('keyup', function (e) {
-    console.log(e.target.value);
-    for (let i = 0; i < ARR.length; i++) {
-        console.log(ARR[i].includes(e.target.value));
-        //&& (!e.target.value === '')
-        if (e.target.value === '') {
+function search() {
+    let ARR = list.map(val => {
+        return val.name
+    })
+    let search = document.querySelector('.input-search')
+    search.addEventListener('keyup', function (e) {
+        console.log(e.target.value);
+        for (let i = 0; i < ARR.length; i++) {
+            console.log(ARR[i].includes(e.target.value));
+            //&& (!e.target.value === '')
+            if (e.target.value === '') {
+                text[i].classList.remove('iconText1')
+                continue
+            }
+            if (ARR[i].includes(e.target.value)) {
+                text[i].classList.add('iconText1')
+            }
+            else {
+                text[i].classList.remove('iconText1')
+            }
+        }
+    })
+    search.addEventListener('blur', function (e) {
+        console.log(12);
+        for (let i = 0; i < ARR.length; i++) {
             text[i].classList.remove('iconText1')
-            continue
         }
-        if (ARR[i].includes(e.target.value)) {
-            text[i].classList.add('iconText1')
-        }
-        else {
-            text[i].classList.remove('iconText1')
-        }
-    }
-})
-search.addEventListener('blur', function (e) {
-    console.log(12);
-    for (let i = 0; i < ARR.length; i++) {
-        text[i].classList.remove('iconText1')
-    }
-    e.target.value = ''
-})
+        e.target.value = ''
+    })
+
+}
