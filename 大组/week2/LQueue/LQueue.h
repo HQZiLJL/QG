@@ -137,8 +137,8 @@ Status TraverseLQueue(LQueue* q);
 
  *  @notice      : None
  */
-void LPrint(void* q);
-Node* LQueue_Search(LQueue* q, ElemType x);
+//void LPrint(void* q);
+Node* LQueue_Search(LQueue* q, void* x);
 /**************************************************************
  *    End-Multi-Include-Prevent Section
  **************************************************************/

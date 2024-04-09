@@ -7,10 +7,9 @@ int p = 0;
 
 // 使用void*来存储这些地址  
 void* genericPointer;
-
-int intValue;
-float floatValue;
-char charValue;
+//int intValue;
+//float floatValue;
+//char charValue;
 int Type;
 
 /**
@@ -35,18 +34,18 @@ void InitLQueue(LQueue* q) {
  *    @param         q 队列指针q
  *  @notice      : None
  */
-//void DestoryLQueue(LQueue* q) {
-//	Node* r = (Node*)malloc(sizeof(Node*));
-//	r = q->front->next;
-//	while (q->rear != q->front) {
-//		q->front->next = r->next;
-//		if (r->next == NULL)//!!!!!!!!!!!!!!!!!!
-//			q->rear = q->front;
-//		(q->front->data--);
-//		free(r);
-//		r = r->next;
-//	}
-//}
+void DestoryLQueue(LQueue* q) {
+	Node* r = (Node*)malloc(sizeof(Node*));
+	r = q->front->next;
+	while (q->rear != q->front) {
+		q->front->next = r->next;
+		if (r->next == NULL)//!!!!!!!!!!!!!!!!!!
+			q->rear = q->front;
+		//(q->front->data--);
+		//free(r);
+		r = r->next;
+	}
+}
 
 /**
  *  @name        : Status IsEmptyLQueue(const LQueue *Q)
@@ -102,9 +101,14 @@ Status EnLQueue(LQueue* q, void* data) {        //将元素data入队
     t->data = data;
     t->type = Type;
 	t->next = NULL;
-	q->rear->next = t;//data入队
-	q->rear = t;
-	//(q->front->data)++;
+    if (q->rear == NULL) {
+        q->front = q->rear = t;
+    }
+    else {
+        q->rear->next = t;//data入队
+        q->rear = t;
+    }
+
     return 1;
 }
 
@@ -115,22 +119,23 @@ Status EnLQueue(LQueue* q, void* data) {        //将元素data入队
  *    @return         : 成功-TRUE; 失败-FALSE
  *  @notice      : None
  */
-//void* DeLQueue(LQueue* q) {
-//	if (IsEmptyLQueue(q)) //判断队列是否空
-//	{
-//		printf("The Q is empty!\n");
-//		return NULL;
-//	}
-//	//移动队头指针
-//	Node *r = q->front->next;
-//	void*  e = r->data;//取队头元素
-//	q->front->next = r->next;
-//	if (r->next == NULL)//!!!!!!!!!!!!!!!!!!
-//		q->rear = q->front;
-//	(q->front->data)--;
-//	free(r);
-//	return e;
-//}
+void* DeLQueue(LQueue* q) {
+	if (IsEmptyLQueue(q)) //判断队列是否空
+	{
+		printf("The Q is empty!\n");
+		return NULL;
+	}
+	//移动队头指针
+	Node* r = q->front;
+	void* e = r->data;//取队头元素
+	q->front = q->front->next;
+	if (r->next == NULL)//!!!!!!!!!!!!!!!!!!
+		q->rear = q->front;
+	//q->front->data--;
+	//free(r);
+    r->next = NULL;
+	return e;
+}
 
 /**
  *  @name        : void ClearLQueue(AQueue *Q)
@@ -142,12 +147,16 @@ void ClearLQueue(LQueue* q) {
 	{
 		LQueue* q = (LQueue*)malloc(sizeof(LQueue*));
 		Node* next = (Node*)malloc(sizeof(Node*));
-		
-		do{
-			next = q->front->next;
-			next->data = 0;
-			next=next->next;
-		} while (next == NULL);
+        next = q->front;
+        if (q->front == NULL&&q->rear==NULL)
+            printf("该队列本来就是空~");
+        else
+            while (next == NULL) 
+            {
+			    //next = q->front->next;
+			    next->data = 0;
+			    next=next->next;
+		    }
 	}
 }
 
@@ -168,34 +177,27 @@ Status TraverseLQueue(LQueue* q) {// 遍历队列
             //printf("%d\n", temp->type);
         if (temp->type==1) {
             //创建一个新的整数变量来存储复制的内容  
-            int copiedIntValue; 
-            // 使用memcpy复制内容
-            memcpy(&copiedIntValue, temp->data, sizeof(int));
-            printf("%d-->", copiedIntValue);
-            temp = temp->next;
-            //printf("%d\n", temp->data);
+            int* intData = (int*)temp->data;
+            printf("%d-->", *intData);  
+            //printf("%d..", temp);
+            //printf("%d..", temp->data);
+            //temp->data = (void*)intData;
         }
         else if (temp->type == 2) {
             //创建一个新的浮点数变量来存储复制的内容  
             float copiedFloatValue;
-            // 将void的地址赋给int*指针 
-            float* floatValue;
-            floatValue = (float*)temp->data;
             // 使用memcpy复制内容  
             memcpy(&copiedFloatValue, temp->data, sizeof(float));
             printf("%f-->", copiedFloatValue);
         }
         else if (temp->type == 3) {
             //创建一个新的字符变量来存储复制的内容  
-            char copiedCharValue;
-            // 将void的地址赋给int*指针 
-            char* charValue;
-            charValue = (char*)temp->data;
+            char copiedCharValue[200];
             // 使用memcpy复制内容  
-            memcpy(&copiedCharValue, temp->data, sizeof(char[100]));
+            memcpy(&copiedCharValue, temp->data, 200*sizeof(char));
             printf("%s-->", copiedCharValue);
         }
-			/*temp = temp->next;*/
+			temp = temp->next;
 		}
 		printf("NULL\n");
 	}
@@ -215,10 +217,37 @@ Node* LQueue_Search(LQueue *q, void* x) // 泛式队列的查找
     Node* cur = q->front;
     p = 0;
     while (cur) // cur指向NULL时退出循环
-    {
-        if (cur->data == x)
-        {
-            return cur;
+    {   
+        if (cur->type == 1) {
+            //创建一个新的整数变量来存储复制的内容  
+            int* intData = (int*)cur->data;
+            int* intc = (void*)x;
+            if (*intData == *intc)
+            {
+                return cur;
+            }
+        }
+        else if (cur->type == 2) {
+            //创建一个新的浮点数变量来存储复制的内容  
+            float* floatData = (float*)cur->data;
+            float* floatc = (float*)x;
+            if (*floatData == *floatc)
+            {
+                return cur;
+            }
+        }
+        else if (cur->type == 3) {
+            //创建一个新的字符变量来存储复制的内容  
+            char* charData = (char*)cur->data;
+            char* charc = (char*)x;
+            if (*charData == *charData)
+            {
+                return cur;
+            }
+            if (cur->data == x)
+            {
+                return cur;
+            }
         }
         cur = cur->next;
         q++;
@@ -226,8 +255,8 @@ Node* LQueue_Search(LQueue *q, void* x) // 泛式队列的查找
     return NULL;
 }
 void search(LQueue* q);
-int getInput(int type, void* data);
-void convere();
+void* getInput(int type);
+void* convere();
 int main() {
     printf("\n\n\n\n");
     LQueue* q = (LQueue*)malloc(sizeof(LQueue*));
@@ -294,33 +323,36 @@ int main() {
         else if (x == 3)
         {
             system("cls");
-            convere();
-            if (Type == 1) {
-                // 将整数的地址赋给void*指针  
-                genericPointer = (void*)&intValue;
-            }
-            if (Type == 2) {
-                // 将浮点数的地址赋给void*指针
-                genericPointer = (void*)&floatValue;
-            }
-            if (Type == 3) {
-                genericPointer = (void*)&charValue;
-            }
-            EnLQueue(q, genericPointer);
-            printf("新队列如下：\n");
+            printf("请输入你想要输入数据的数据类型(1:整型 2:浮点型 3:字符型)：");
+            EnLQueue(q, convere());
+            printf("新队列如下：");
             TraverseLQueue(q);
+        }
+        else if (x == 4)
+        {
+            system("cls");
+            void* e=DeLQueue(q);
+            int *a = (int*)e;
+            printf("队头元素值为%d",a);
+        }
+        else if (x == 5)
+        {
+            system("cls");
+            search(q);
+            
         }
         else if (x == 6)
         {
             system("cls");
             TraverseLQueue(q);
         }
-        //else if (x == 7) // 置空链表并退出
-        //{
-        //    system("cls");
-        //    ////DestoryLQueue(q);
-        //    break;
-        //}
+        else if (x == 7) // 置空链表并退出
+        {
+            system("cls");
+            DestoryLQueue(q);
+            printf("队列已置空！\n");
+            break;
+        }
         else if (x > 7)
         {
             system("cls");
@@ -337,26 +369,20 @@ int main() {
  
  void search(LQueue *q)
  {
-     printf("请输入想要查找结点的数据域值：");
-     int x;
-     while (scanf_s("%d", &x) == 0)
-     {
-         rewind(stdin);
-         printf("输入数据类型错误！\n");
-         printf("请输入想要查找结点的数据域值：");
-     }
-     LQueue_Search(q, x);
-     if (LQueue_Search(q, x) == NULL)
+     printf("请输入你想要查找数据的数据类型(1:整型 2:浮点型 3:字符型)：");
+     Node* node = LQueue_Search(q, convere());
+     if (node == NULL)
          printf("此链表不存在该数！");
      else
-         printf("该值排队列中第%d位\n", p);
+         printf("该值排队列中第%d位\n", p+1);
  }
 
- int getInput(int type, void* data) { 
+ void* getInput(int type) { 
+     void* get;
      switch (type)
      {
      case 1: {
-         int* intValue = (int*)data;
+         int* intValue = (int*)malloc(sizeof(int));
          printf("请输入一个整数: ");
          while (scanf_s("%d", intValue) == 0)
          {
@@ -364,10 +390,11 @@ int main() {
              printf("输入数据类型错误！\n");
              printf("请输入一个整数：");
          }
-         break;
+         get = (void*)intValue;
+         return get;
      }
      case 2: {
-         float* floatValue = (float*)data;
+         float* floatValue = (float*)malloc(sizeof(float));
          printf("请输入一个浮点数: ");
          while (scanf_s("%f", floatValue) == 0)
          {
@@ -375,18 +402,42 @@ int main() {
              printf("输入数据类型错误！\n");
              printf("请输入一个浮动数：");
          }
-         break;
+         get = (void*)floatValue;
+         return get;
      }
      case 3: {
-         char* charValue = (char*)data;
-         printf("请输入一个字符: ");
-         while (scanf_s("%s", charValue) == 0)
-         {
-             rewind(stdin);
-             printf("输入数据类型错误！\n");
-             printf("请输入一个字符数：");
-         }// 注意空格来跳过任何空白字符  
-         break;
+         char* charValue = (char*)malloc(100);
+         if (charValue == NULL) {
+             printf("内存分配失败\n");
+             return 1;
+         }
+         printf("请输入一个字符串: ");
+         // 使用scanf读取输入到myString中  
+         fgets(charValue, 100, stdin);
+
+         // 去除可能存在的换行符  
+         charValue[strcspn(charValue, "\n")] = 0;
+         // 注意：%s不会读取空格，如果需要读取空格请使用其他方法，比如fgets  
+
+         // 打印字符串  
+         printf("你输入的字符串是: %s\n", charValue);
+//         char *charValue = (char*)malloc(sizeof(char));
+//         //int q = 0;
+//;        printf("请输入一个字符串: ");
+//         //fflush(stdin);
+//
+//         fgets(charValue, sizeof(charValue)*100, stdin);
+//         //while ((charValue[q++] = getchar()) != '\n');
+//         //q--;/*
+//         //charValue[q] = 0;*/
+//         //while (scanf_s("%s", charValue) == 0)
+//         //{
+//         //    fflush(stdin);
+//         //    printf("输入数据类型错误！\n");
+//         //    printf("请输入一个字符数：");
+//         //}// 注意空格来跳过任何空白字符  
+         get = (void*)charValue;
+         return get;
      }
      }                 // 可以添加更多类型的case  
         //default:
@@ -401,22 +452,23 @@ int main() {
         }*/
      return 0;
  }
-void convere() {
-      printf("请输入你想要输入数据的数据类型(1:整型 2:浮点型 3:字符型)：");
+void* convere() {
+      
       while (scanf_s("%d", &Type) == 0|| Type >3)
       {
           rewind(stdin);
           printf("输入应为1~3！\n");
           printf("请输入你想要输入数据的数据类型：");
       }
+      //printf("\n");
       if (Type == 1) {
-          getInput(1, &intValue);
+          return getInput(1);
       }
       if (Type == 2) {
-          getInput(2, &floatValue);
+          return getInput(2);
       }
       if (Type == 3) {
-          getInput(3, &charValue);
+          return getInput(3);
       }
  }
 //else if (x == 4)
