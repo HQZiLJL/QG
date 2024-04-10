@@ -4,7 +4,6 @@
 #include"LQueue.h"
 
 int p = 0;
-
 // 使用void*来存储这些地址  
 void* genericPointer;
 //int intValue;
@@ -126,14 +125,11 @@ void* DeLQueue(LQueue* q) {
 		return NULL;
 	}
 	//移动队头指针
-	Node* r = q->front;
+	Node* r = q->front->next;
 	void* e = r->data;//取队头元素
 	q->front = q->front->next;
 	if (r->next == NULL)//!!!!!!!!!!!!!!!!!!
 		q->rear = q->front;
-	//q->front->data--;
-	//free(r);
-    r->next = NULL;
 	return e;
 }
 
@@ -333,7 +329,7 @@ int main() {
             system("cls");
             void* e=DeLQueue(q);
             int *a = (int*)e;
-            printf("队头元素值为%d",a);
+            printf("队头元素值为%d",*a);
         }
         else if (x == 5)
         {
